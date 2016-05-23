@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/jstemmer/go-junit-report/gotestparser"
 	"github.com/jstemmer/go-junit-report/parser"
 )
 
@@ -366,7 +367,8 @@ func TestParser(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		report, err := parser.Parse(file, testCase.packageName)
+		gtp := gotestparser.New()
+		report, err := gtp.Parse(file, testCase.packageName)
 		if err != nil {
 			t.Fatalf("error parsing: %s", err)
 		}
