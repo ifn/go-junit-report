@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jstemmer/go-junit-report/gotestparser"
-	"github.com/jstemmer/go-junit-report/parser"
+	"github.com/ifn/go-junit-report/gotestparser"
+	"github.com/ifn/go-junit-report/parser"
 )
 
 type TestCase struct {

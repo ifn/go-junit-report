@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jstemmer/go-junit-report/golintparser"
-	"github.com/jstemmer/go-junit-report/gotestparser"
-	"github.com/jstemmer/go-junit-report/parser"
+	"github.com/ifn/go-junit-report/golintparser"
+	"github.com/ifn/go-junit-report/gotestparser"
+	"github.com/ifn/go-junit-report/parser"
 )
 
 var (

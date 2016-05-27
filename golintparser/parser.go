@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/jstemmer/go-junit-report/parser"
+	"github.com/ifn/go-junit-report/parser"
 )
 
 var (
