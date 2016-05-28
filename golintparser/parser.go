@@ -5,6 +5,7 @@ import (
 	"io"
 	"regexp"
 	"strings"
+	"path/filepath"
 
 	"github.com/ifn/go-junit-report/parser"
 )
@@ -25,9 +26,9 @@ func New() *GolintParser {
 func (glp *GolintParser) Parse(r io.Reader, _pkgName string) (*parser.Report, error) {
 	reader := bufio.NewReader(r)
 
-	report := &parser.Report{make([]parser.Package, 0)}
-	var tests []*parser.Test
-	var prevPkgName string
+	var report = &parser.Report{make([]parser.Package, 0)}
+	var prevPath string
+	var test *parser.Test
 
 	// parse lines
 	for {
@@ -44,28 +45,28 @@ func (glp *GolintParser) Parse(r io.Reader, _pkgName string) (*parser.Report, er
 			continue
 		}
 
-		// package name is a file path
-		pkgName := strings.Split(line, ":")[0]
-		pkgName = strings.Replace(strings.TrimPrefix(pkgName, "/"), "/", ".", -1)
-		// test name is the error position in line
-		testName := strings.Join(strings.Split(line, ":")[1:3], ":")
+		path := strings.Split(line, ":")[0]
+		dir := filepath.Dir(path)
+		dir = strings.Replace(strings.TrimPrefix(dir, "/"), "/", ".", -1)
+		name := filepath.Base(path)
 
 		// line corresponds to a new file
-		if prevPkgName != pkgName {
-			report.Packages = append(report.Packages, parser.Package{
-				Name: pkgName,
-			})
-			tests = make([]*parser.Test, 0)
-			prevPkgName = pkgName
+		if prevPath != path {
+			prevPath = path
+
+			test = &parser.Test{
+				Name:   name,
+				Result: parser.FAIL,
+				Output: make([]string, 0),
+			}
+			pkg := parser.Package{
+				Name: dir,
+				Tests: []*parser.Test{test},
+			}
+			report.Packages = append(report.Packages, pkg)
 		}
 
-		// append test case to a package
-		tests = append(tests, &parser.Test{
-			Name:   testName,
-			Result: parser.FAIL,
-			Output: []string{line},
-		})
-		report.Packages[len(report.Packages)-1].Tests = tests
+		test.Output = append(test.Output, line)
 	}
 
 	return report, nil
